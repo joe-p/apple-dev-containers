@@ -6,6 +6,16 @@ This repo contains a [Dockerfile](./Dockerfile) for building an image for genera
 
 This pattern by itself is **NOT SECURE** with regular container runtimes (docker, podman, etc.). The image runs as root which is generally considered to be **INSECURE**. This repo, however, is specifically setup to work with Apple's [container](https://github.com/apple/container) framework. Apple's containers are more secure than standard containers because each container is backed by a separated microVM. This means there is hardware-level isolation between every container and the host.
 
+### Additional Layers of Security
+
+#### Enclave SSH Agent
+
+To enable working with git remotes in containers I pass my ssh-agent through to the container via the `--ssh` flag. To secure my SSH keys I use [secritive](https://github.com/maxgoedjen/secretive) which enables SSH key signing without the key ever leaving the secure enclave. All of my secretive keys require biometrics, meaning an agent cannot sign a commit or push changes without me explicitly giving it approval via Touch ID.
+
+#### Mise Lockfile and Minimum Release Age
+
+To install developer tooling in the container, I use [mise](https://mise.jdx.dev/) with a [lock file](https://mise.jdx.dev/dev-tools/mise-lock.html) and a 7 day [minimum release age](https://mise.jdx.dev/tips-and-tricks.html#minimum-release-age) to protect against supply-chain attacks.
+
 ## How It Works
 
 The image defined in [Dockerfile](./Dockerfile) pulls in various configuration files such as my [.zshrc](https://github.com/joe-p/dotfiles/blob/master/.zshrc) and [neovim config](https://github.com/joe-p/neovim-config). For tool installation (i.e. uv, npm, ripgrep, etc.) [mise](https://mise.jdx.dev/) is used. The docker image uses my [mise config](https://github.com/joe-p/dotfiles/blob/master/.config/mise/config.toml) and [mise lock file](https://github.com/joe-p/dotfiles/blob/master/.config/mise/mise.lock) to quickly and securely install all of my preferred developer tools. mise's [minimum release age](https://mise.jdx.dev/tips-and-tricks.html#minimum-release-age) also helps mitigate against supply-chain attacks.
