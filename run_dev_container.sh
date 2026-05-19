@@ -1,3 +1,4 @@
+#!/bin/sh
 set -x
 
 REPO_NAME=$1
@@ -5,6 +6,8 @@ REPO_URL=$2
 CONTAINER_NAME=$REPO_NAME-dev
 
 container run \
+    --memory 8G \
+    --cpus 4 \
     --dns 9.9.9.9 \
     --init \
     --ssh \
