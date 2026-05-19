@@ -37,10 +37,6 @@ RUN --mount=type=secret,id=GITHUB_TOKEN,env=GITHUB_TOKEN \
     mise install --verbose && \
     rm -rf /home/dev/.cache
 
-COPY dotfiles/.config/nvim /home/dev/.config/nvim
-RUN .local/share/mise/installs/neovim/latest/bin/nvim --headless -c 'packloadall | quit' && \
-    rm -rf .config/nvim
-
 ENV MISE_CONFIG_DIR="/home/dev/.config/mise"
 ENV MISE_CACHE_DIR="/home/dev/.cache/mise"
 ENV MISE_DATA_DIR="/home/dev/.local/share/mise"
@@ -50,5 +46,8 @@ ENV PATH="/home/dev/.local/bin:$PATH"
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+RUN chsh -s /usr/bin/zsh root
+ENV SHELL=/usr/bin/zsh
 
 CMD ["zsh"]
