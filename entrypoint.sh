@@ -30,4 +30,7 @@ else
     mkdir /home/dev/git && git clone "$REPO_URL" /home/dev/git/"$REPO_NAME"
 fi
 
-exec "$@"
+chown dev:dev $SSH_AUTH_SOCK
+chown -R dev:dev /home/dev
+
+exec gosu dev:dev "$@"

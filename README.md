@@ -4,7 +4,7 @@ This repo contains a [Dockerfile](./Dockerfile) for building an image for genera
 
 ## Security
 
-This pattern by itself is **NOT SECURE** with regular container runtimes (docker, podman, etc.). The image runs as root which is generally considered to be **INSECURE**. This repo, however, is specifically setup to work with Apple's [container](https://github.com/apple/container) framework. Apple's containers are more secure than standard containers because each container is backed by a separated microVM. This means there is hardware-level isolation between every container and the host.
+Typical container runtimes are generally *NOT A SECURE FORM OF ISOLATION*. For example, Docker runs its daemon as root which means a container escape is equivalent to a malicious actor having root access on your host system. Rootless setups, like Podman, are better in this regard but still use the host kernel and share a socket across containers. This repo, however, is specifically setup to work with Apple's [container](https://github.com/apple/container) framework. Apple's containers are more secure than standard containers because each container is backed by a separated microVM. This means there is hardware-level isolation between every container and the host.
 
 ### Additional Layers of Security
 
