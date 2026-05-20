@@ -17,6 +17,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	git-all \
 	openssh-client\
 	gnupg \
+	kitty-terminfo \
+	libssl-dev \
+	pkg-config \
     	&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/dev
@@ -43,11 +46,13 @@ ENV MISE_DATA_DIR="/home/dev/.local/share/mise"
 ENV PATH="/home/dev/.local/share/mise/shims:$PATH"
 ENV PATH="/home/dev/.local/bin:$PATH"
 
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+COPY ssh_known_hosts /root/.ssh/known_hosts
+ENV TERM=xterm-kitty
 
 RUN chsh -s /usr/bin/zsh root
 ENV SHELL=/usr/bin/zsh
 
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["zsh"]

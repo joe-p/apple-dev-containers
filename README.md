@@ -63,3 +63,9 @@ A compromise could be made with VMs that uses a single VM to run a container run
 ### Sandboxing Tools
 
 There are various userspace sandboxing tools such as Anthropic's [sandbox runtime](https://github.com/anthropic-experimental/sandbox-runtime) or [nono](https://github.com/always-further/nono). These tools are convenient because they allow you to sandbox specific application on the host OS without any VMs or containers. The downside is that they use primitives that can be very hard to properly configure. This can lead to security bugs or UX friction points. One small hole in the configuration can leave the entire host OS exposed. It is also typically hard to truly sandbox application and have them work as expected. For example, two codebases might use tools that require read/write access to `~/.cache` (i.e. `uv`) which means code bases that should otherwise be isolated now have a common point of communication for malicious actors.
+
+## Future Work
+
+- Use named volumes to for `/git` so it's easier to migrate to newer images
+- Add a reverse proxy that can do credential injection for AI inference providers so it's easier to safely use API keys in containers
+- Investigate the options for further networking isolation
