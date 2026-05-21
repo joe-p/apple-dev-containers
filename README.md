@@ -16,6 +16,10 @@ To enable working with git remotes in containers I pass my ssh-agent through to 
 
 To install developer tooling in the container, I use [mise](https://mise.jdx.dev/) with a [lock file](https://mise.jdx.dev/dev-tools/mise-lock.html) and a 7 day [minimum release age](https://mise.jdx.dev/tips-and-tricks.html#minimum-release-age) to protect against supply-chain attacks.
 
+#### Reverse Proxy for Credential Injection
+
+To avoid having to store secrets in each individual container, the containers can talk to a reverse proxy on the host that injects credentials into requests. The host can then use a secure credential store, such as the OS keyring, to securely store the credentials without ever exposing them to the containers.
+
 ## How It Works
 
 The image defined in [Dockerfile](./Dockerfile) pulls in various configuration files such as my [.zshrc](https://github.com/joe-p/dotfiles/blob/master/.zshrc) and [neovim config](https://github.com/joe-p/neovim-config). For tool installation (i.e. uv, npm, ripgrep, etc.) [mise](https://mise.jdx.dev/) is used. The docker image uses my [mise config](https://github.com/joe-p/dotfiles/blob/master/.config/mise/config.toml) and [mise lock file](https://github.com/joe-p/dotfiles/blob/master/.config/mise/mise.lock) to quickly and securely install all of my preferred developer tools. mise's [minimum release age](https://mise.jdx.dev/tips-and-tricks.html#minimum-release-age) also helps mitigate against supply-chain attacks.
@@ -31,6 +35,10 @@ The container is expected to be called with three environment variables
 ### Convenience Script
 
 To simplify usage, [run_dev_container.sh](./run_dev_container.sh) takes the above variables as arguments and handles creating, starting, and stopping the container. It is important to automatically stop containers because [freed container memory is not returned to the host OS](https://github.com/apple/container/blob/main/docs/technical-overview.md#releasing-container-memory-to-macos).
+
+### Auth Proxy
+
+[auth-proxy/index.ts](./auth-proxy/index.ts) is a reverse proxy that injects credentials into API requests. It can be ran with `bun index.ts` and it uses the OS keyring to store credentials. See [auth-proxy/README.md](./auth-proxy/README.md) for more details.
 
 ## Downsides
 
@@ -67,5 +75,4 @@ There are various userspace sandboxing tools such as Anthropic's [sandbox runtim
 ## Future Work
 
 - Use named volumes to for `/git` so it's easier to migrate to newer images
-- Add a reverse proxy that can do credential injection for AI inference providers so it's easier to safely use API keys in containers
 - Investigate the options for further networking isolation

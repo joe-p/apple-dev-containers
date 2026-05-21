@@ -12,7 +12,7 @@ container run \
     --init \
     --ssh \
     -it \
-    -e FORWARD_PORTS=4002,4001,8980 \
+    -e FORWARD_PORTS=4002,4001,8980,7777 \
     -e REPO_NAME=$REPO_NAME \
     -e REPO_URL=$REPO_URL \
     --name $CONTAINER_NAME dev:latest || \
