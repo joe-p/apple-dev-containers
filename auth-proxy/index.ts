@@ -43,12 +43,14 @@ interface RouteConfig {
   host: string;
   service: string;
   account: string;
+  headers?: Record<string, string>;
 }
 
-// Service definition with keys
+// Service definition with keys and optional headers
 interface ServiceConfig {
   host: string;
   keys: string[];
+  headers?: Record<string, string>;
 }
 
 // Root TOML config type
@@ -68,7 +70,7 @@ const PORT = config.port || 3000;
 const ROUTES: RouteConfig[] = [];
 
 for (const [serviceName, serviceConfig] of Object.entries(config.services)) {
-  const { host, keys } = serviceConfig;
+  const { host, keys, headers } = serviceConfig;
 
   // For each key, create a route with path /<service>/<key>/
   for (const key of keys) {
@@ -77,6 +79,7 @@ for (const [serviceName, serviceConfig] of Object.entries(config.services)) {
       host,
       service: KEYRING_SERVICE,
       account: `${serviceName}:${key}`,
+      headers,
     };
 
     ROUTES.push(route);
@@ -120,9 +123,20 @@ Bun.serve({
       const newPath = url.pathname.slice(route.path.length - 1); // Keep leading slash
       const targetUrl = `https://${route.host}${newPath}${url.search}`;
 
+      // Get the secret/password for header replacement
+      const secret = entry.getPassword() ?? "";
+
       // Clone and modify headers
       const headers = new Headers(request.headers);
-      headers.set("Authorization", `Bearer ${entry.getPassword()}`);
+
+      // Apply custom headers from service config, replacing $SECRET with the actual secret
+      if (route.headers) {
+        for (const [headerName, headerValue] of Object.entries(route.headers)) {
+          headers.set(headerName, headerValue.replace(/\$SECRET/g, secret));
+        }
+      } else {
+        headers.set("Authorization", `Bearer ${secret}`);
+      }
 
       // Remove hop-by-hop headers
       headers.delete("host");
