@@ -13,10 +13,10 @@ for port in "${PORT_LIST[@]}"; do
 done
 
 if [ ! -d "$HOME/.dotfiles" ]; then
-	git clone --bare https://github.com/joe-p/dotfiles.git $HOME/.dotfiles
-	git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME reset HEAD
-	git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME submodule update --init --recursive
-	git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME checkout .
+    git clone --bare https://github.com/joe-p/dotfiles.git $HOME/.dotfiles
+    git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME reset HEAD
+    git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME submodule update --init --recursive
+    git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME checkout .
 fi
 
 git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME pull

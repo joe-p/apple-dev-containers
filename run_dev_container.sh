@@ -15,7 +15,7 @@ container run \
     -e FORWARD_PORTS=4002,4001,8980 \
     -e REPO_NAME=$REPO_NAME \
     -e REPO_URL=$REPO_URL \
-    --name $CONTAINER_NAME dev:1 || \
+    --name $CONTAINER_NAME dev:latest || \
     (container start $CONTAINER_NAME && \
     container exec -e TERM=xterm-kitty -it -w /home/dev/git/$REPO_NAME $CONTAINER_NAME zsh)
 
