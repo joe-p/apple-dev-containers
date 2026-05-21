@@ -59,5 +59,10 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 ENV SHELL=/usr/bin/zsh
 ENV TERM=xterm-kitty
 
+# Allows a shared config for host and containers to securely execute
+# behavior depending on whether or not we are in a container.
+# For example, when in a container we can relax sandboxing rules for agents
+RUN echo 1 > /run/in_container && chmod 444 /run/in_container
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["zsh"]
