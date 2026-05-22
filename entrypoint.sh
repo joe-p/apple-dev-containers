@@ -36,4 +36,6 @@ mise install --dry-run
 chown dev:dev $SSH_AUTH_SOCK
 chown -R dev:dev /home/dev
 
-exec gosu dev:dev "$@"
+echo "entrypoint.sh DONE"
+
+exec dmesg -wH

@@ -65,4 +65,3 @@ ENV TERM=xterm-kitty
 RUN echo 1 > /run/in_container && chmod 444 /run/in_container
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["zsh"]
