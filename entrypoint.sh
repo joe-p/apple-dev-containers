@@ -31,6 +31,7 @@ else
     cd /home/dev/git/"$REPO_NAME"
 fi
 
+mise trust 
 mise install --dry-run
 
 chown dev:dev $SSH_AUTH_SOCK
