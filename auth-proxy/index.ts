@@ -1,6 +1,10 @@
 import { Entry } from "@napi-rs/keyring";
 import * as readline from "readline";
 
+function log(msg: string, logger: typeof console.log = console.log) {
+  logger(`[${new Date().toISOString()}] ${msg}`);
+}
+
 async function getApiKey(name: string): Promise<string> {
   const rl = readline.createInterface({
     input: process.stdin,
@@ -105,11 +109,12 @@ Bun.serve({
   async fetch(request) {
     try {
       const url = new URL(request.url);
-      console.debug(`Processing: ${request.url}`);
+      log(`[${new Date()}] Processing: ${request.url}`);
 
       // Find route for this path
       const route = getRouteConfig(url.pathname);
       if (!route) {
+        console.debug(`[${new Date()}]: Route not found!`);
         return new Response(JSON.stringify({ error: "Not found" }), {
           status: 404,
           headers: { "Content-Type": "application/json" },
@@ -149,6 +154,7 @@ Bun.serve({
       headers.delete("transfer-encoding");
       headers.delete("upgrade");
 
+      log(`Sending request to ${targetUrl}`);
       // Forward request
       const response = await fetch(targetUrl, {
         method: request.method,
@@ -158,6 +164,7 @@ Bun.serve({
             ? await request.blob()
             : undefined,
       });
+      log(`Got response: ${JSON.stringify(response)}`);
 
       // Remove compression headers since fetch() already decompressed the body
       const responseHeaders = new Headers(response.headers);
@@ -170,7 +177,7 @@ Bun.serve({
         headers: responseHeaders,
       });
     } catch (error) {
-      console.error("Proxy error:", error);
+      log(`Proxy error: ${JSON.stringify(error, null, 2)}`, console.error);
       return new Response(
         JSON.stringify({ error: "Proxy error", message: String(error) }),
         {
@@ -182,8 +189,8 @@ Bun.serve({
   },
 });
 
-console.log(`Reverse proxy running on http://localhost:${PORT}`);
-console.log(
-  "Loaded routes:",
-  ROUTES.map((r) => `${r.path} → ${r.host} (${r.account})`).join(", "),
+log(`Reverse proxy running on http://localhost:${PORT}`);
+log(
+  "Loaded routes: " +
+    ROUTES.map((r) => `${r.path} → ${r.host} (${r.account})`).join(", "),
 );
