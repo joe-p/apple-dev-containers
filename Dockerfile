@@ -15,7 +15,7 @@ RUN groupadd --gid 1337 dev && \
 
 WORKDIR /home/dev
 
-COPY dotfiles/.config/mise/ /home/dev/.config/mise/
+COPY dotfiles/dot_config/mise/ /home/dev/.config/mise/
 COPY setup-mise.sh setup-mise.sh
 
 # Install the apt packages needed for mise and then install mise

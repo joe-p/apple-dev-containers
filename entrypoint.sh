@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 HOST_IP=$(ip route | awk '/default/ {print $3; exit}')
 
@@ -12,11 +12,9 @@ for port in "${PORT_LIST[@]}"; do
     socat TCP-LISTEN:"$port",bind=127.0.0.1,reuseaddr,fork TCP:"$HOST_IP":"$port" &
 done
 
-if [ ! -d "$HOME/.dotfiles" ]; then
-    git clone --bare https://github.com/joe-p/dotfiles.git $HOME/.dotfiles
-    git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME reset HEAD
-    git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME submodule update --init --recursive
-    git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME checkout .
+if [ ! -d "$HOME/.local/share/chezmoi" ]; then
+    git clone --branch chezmoi https://github.com/joe-p/dotfiles.git $HOME/.local/share/chezmoi
+    chezmoi apply 
 fi
 
 cd /home/dev/.pi/agent/extensions && pnpm install && cd 1000-lsp && pnpm install

@@ -11,7 +11,6 @@ sed '/entrypoint.sh DONE/q' <(container run \
     --dns 9.9.9.9 \
     --init \
     --ssh \
-    -t \
     -e FORWARD_PORTS=4002,4001,8980,7777 \
     -e REPO_NAME=$REPO_NAME \
     -e REPO_URL=$REPO_URL \
