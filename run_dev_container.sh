@@ -18,6 +18,6 @@ sed '/entrypoint.sh DONE/q' <(container run \
     dev:latest)
 
 container start $CONTAINER_NAME
-container exec -e TERM=xterm-kitty -it -w /home/dev/git/$REPO_NAME $CONTAINER_NAME gosu dev:dev zsh
+container exec --user dev -e TERM=xterm-kitty -it -w /home/dev/git/$REPO_NAME $CONTAINER_NAME zsh
 container stop $CONTAINER_NAME > /dev/null 2>&1 &
 
